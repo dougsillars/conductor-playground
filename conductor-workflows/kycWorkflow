@@ -1,0 +1,402 @@
+{
+  "createTime": 1657144622727,
+  "updateTime": 1657168656495,
+  "name": "kycWorkflow",
+  "description": "This is an example kyc workflow that has different tasks",
+  "version": 11,
+  "tasks": [
+    {
+      "name": "get_client_personal_details",
+      "taskReferenceName": "get_client_personal_details",
+      "inputParameters": {
+        "http_request": {
+          "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+          "method": "GET"
+        }
+      },
+      "type": "HTTP",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": []
+    },
+    {
+      "name": "get_client_financial_details",
+      "taskReferenceName": "get_client_financial_details",
+      "inputParameters": {
+        "http_request": {
+          "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+          "method": "GET"
+        }
+      },
+      "type": "HTTP",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": []
+    },
+    {
+      "name": "get_client_background",
+      "taskReferenceName": "get_client_background",
+      "inputParameters": {
+        "http_request": {
+          "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+          "method": "GET"
+        }
+      },
+      "type": "HTTP",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": []
+    },
+    {
+      "name": "customer_information_validations",
+      "taskReferenceName": "customer_information_validations_ref",
+      "inputParameters": {
+        "http_request": {
+          "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+          "method": "GET"
+        }
+      },
+      "type": "FORK_JOIN",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [
+        [
+          {
+            "name": "validate_names",
+            "taskReferenceName": "validate_names_ref",
+            "inputParameters": {
+              "http_request": {
+                "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+                "method": "GET"
+              }
+            },
+            "type": "HTTP",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": []
+          }
+        ],
+        [
+          {
+            "name": "validate_sanctions",
+            "taskReferenceName": "validate_sanctions_ref",
+            "inputParameters": {
+              "http_request": {
+                "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+                "method": "GET"
+              }
+            },
+            "type": "HTTP",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": []
+          }
+        ],
+        [
+          {
+            "name": "validate_account",
+            "taskReferenceName": "validate_account_ref",
+            "inputParameters": {
+              "http_request": {
+                "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+                "method": "GET"
+              }
+            },
+            "type": "HTTP",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": []
+          }
+        ]
+      ],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": []
+    },
+    {
+      "name": "validations_join",
+      "taskReferenceName": "validations_join_ref",
+      "inputParameters": {
+        "http_request": {
+          "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+          "method": "GET"
+        }
+      },
+      "type": "JOIN",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [
+        "validate_account_ref",
+        "validate_sanctions_ref",
+        "validate_names_ref"
+      ],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": []
+    },
+    {
+      "name": "switch_task",
+      "taskReferenceName": "switch_task",
+      "inputParameters": {
+        "switchCaseValue": "${workflow.input.service}"
+      },
+      "type": "SWITCH",
+      "decisionCases": {
+        "customer": [
+          {
+            "name": "customer_acceptance",
+            "taskReferenceName": "customer_acceptance_ref",
+            "inputParameters": {
+              "http_request": {
+                "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+                "method": "GET"
+              }
+            },
+            "type": "FORK_JOIN",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [
+              [
+                {
+                  "name": "calculate_risk_score",
+                  "taskReferenceName": "calculate_risk_score",
+                  "inputParameters": {
+                    "http_request": {
+                      "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+                      "method": "GET"
+                    }
+                  },
+                  "type": "HTTP",
+                  "decisionCases": {},
+                  "defaultCase": [],
+                  "forkTasks": [],
+                  "startDelay": 0,
+                  "joinOn": [],
+                  "optional": false,
+                  "defaultExclusiveJoinTask": [],
+                  "asyncComplete": false,
+                  "loopOver": []
+                }
+              ],
+              [
+                {
+                  "name": "assign_customer_class",
+                  "taskReferenceName": "assign_customer_class",
+                  "inputParameters": {},
+                  "type": "SIMPLE",
+                  "decisionCases": {},
+                  "defaultCase": [],
+                  "forkTasks": [],
+                  "startDelay": 0,
+                  "joinOn": [],
+                  "optional": false,
+                  "defaultExclusiveJoinTask": [],
+                  "asyncComplete": false,
+                  "loopOver": []
+                }
+              ]
+            ],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": []
+          }
+        ],
+        "no_customer": [
+          {
+            "name": "no_customer_acceptance2",
+            "taskReferenceName": "no_customer_acceptance2_ref",
+            "inputParameters": {
+              "http_request": {
+                "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+                "method": "GET"
+              }
+            },
+            "type": "HTTP",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": []
+          },
+          {
+            "name": "customer-rejected2",
+            "taskReferenceName": "customer_rejected2_ref",
+            "inputParameters": {
+              "terminationStatus": "COMPLETED",
+              "workflowOutput": "${task0.output}"
+            },
+            "type": "TERMINATE",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": []
+          }
+        ]
+      },
+      "defaultCase": [
+        {
+          "name": "no_customer_acceptance",
+          "taskReferenceName": "no_customer_acceptance_ref",
+          "inputParameters": {
+            "http_request": {
+              "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+              "method": "GET"
+            }
+          },
+          "type": "HTTP",
+          "decisionCases": {},
+          "defaultCase": [],
+          "forkTasks": [],
+          "startDelay": 0,
+          "joinOn": [],
+          "optional": false,
+          "defaultExclusiveJoinTask": [],
+          "asyncComplete": false,
+          "loopOver": []
+        },
+        {
+          "name": "customer-rejected",
+          "taskReferenceName": "customer_rejected_ref",
+          "inputParameters": {
+            "terminationStatus": "COMPLETED",
+            "workflowOutput": "${task0.output}"
+          },
+          "type": "TERMINATE",
+          "decisionCases": {},
+          "defaultCase": [],
+          "forkTasks": [],
+          "startDelay": 0,
+          "joinOn": [],
+          "optional": false,
+          "defaultExclusiveJoinTask": [],
+          "asyncComplete": false,
+          "loopOver": []
+        }
+      ],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": [],
+      "evaluatorType": "value-param",
+      "expression": "switchCaseValue"
+    },
+    {
+      "name": "notification_join",
+      "taskReferenceName": "notification_join_ref",
+      "inputParameters": {
+        "http_request": {
+          "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+          "method": "GET"
+        }
+      },
+      "type": "JOIN",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [
+        "assign_customer_class",
+        "calculate_risk_score"
+      ],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": []
+    },
+    {
+      "name": "send_notification",
+      "taskReferenceName": "send_notification",
+      "inputParameters": {
+        "http_request": {
+          "uri": "https://equx5z7b9j.execute-api.eu-central-1.amazonaws.com/prod/account",
+          "method": "GET"
+        }
+      },
+      "type": "HTTP",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": []
+    }
+  ],
+  "inputParameters": [
+    "firstName",
+    "lastName",
+    "homeAdress",
+    "salary"
+  ],
+  "outputParameters": {
+    "data": "${get_client_personal_details.output.response.body.data}",
+    "source": "${get_client_personal_details.output.response.body.source}"
+  },
+  "schemaVersion": 2,
+  "restartable": true,
+  "workflowStatusListenerEnabled": false,
+  "ownerEmail": "lockhead@lockhead.net",
+  "timeoutPolicy": "ALERT_ONLY",
+  "timeoutSeconds": 0,
+  "variables": {},
+  "inputTemplate": {}
+}

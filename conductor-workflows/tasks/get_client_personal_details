@@ -1,0 +1,28 @@
+{
+  "createTime": 1657147813234,
+  "updateTime": 1657148608417,
+  "createdBy": "Lockhead",
+  "updatedBy": "",
+  "name": "get_client_personal_details",
+  "description": "Task to retrieve personal details",
+  "retryCount": 3,
+  "timeoutSeconds": 3600,
+  "inputKeys": [
+    "firstName",
+    "lastName",
+    "homeAdress",
+    "birthDate",
+	"birthCountry",
+	"homeCountry"
+  ],
+  "outputKeys": [],
+  "timeoutPolicy": "TIME_OUT_WF",
+  "retryLogic": "FIXED",
+  "retryDelaySeconds": 60,
+  "responseTimeoutSeconds": 600,
+  "inputTemplate": {},
+  "rateLimitPerFrequency": 0,
+  "rateLimitFrequencyInSeconds": 1,
+  "ownerEmail": "lockhead@lockhead.net",
+  "backoffScaleFactor": 1
+}
